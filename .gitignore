@@ -1,0 +1,8 @@
+# coisas instaladas
+node_modules/
+
+# informacoes privadas
+.env
+
+# arquivos gerados
+dist/
