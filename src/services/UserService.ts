@@ -1,5 +1,5 @@
-import { UserRepository } from "../repositories/userRepository";
-import { User } from "../entities/user";
+import { UserRepository } from "../repositories/UserRepository";
+import { User } from "../entities/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 

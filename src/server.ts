@@ -3,6 +3,9 @@ import app from "./app";
 import { AppDataSource } from "./config/database";
 
 const PORT = 3000;
+
+
+
 AppDataSource.initialize()
   .then(() => {
     console.log("Banco de dados conectado!");

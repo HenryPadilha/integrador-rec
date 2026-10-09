@@ -7,8 +7,8 @@ export class User {
   id!: number;
   @Column()
   nome!: string;
-  @Column({ unique: true })
+  @Column({ unique: true, nullable:false })
   email!: string;
-  @Column()
+  @Column({nullable: false})
   senha!: string;
 }
