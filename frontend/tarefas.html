@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../frontend/css/tarefas.css">
+    <title>Tarefas</title>
+</head>
+<body>
+
+    <header class="barra">
+        TASKS
+    </header>
+
+    <div class="menu">
+        <button class="perfil">Perfil</button>
+        <button class="sair" onclick="window.location.href='cadastro.html'">  Sair
+</button>
+    </div>
+
+    <div class="conteudo">
+
+        <h1>Minhas tarefas</h1>
+
+        <button class="tarefa" onclick="novaTarefa()">
+            nova tarefa
+        </button>
+
+        <div id="lista-tarefas"></div>
+
+    </div>
+
+    <div id="caixa-tarefa" class="modal">
+
+        <div class="caixa">
+
+            <h3>Adicionar tarefa</h3>
+
+            <input type="text" id="titulo-tarefa" placeholder="Nome da tarefa">
+
+            <button class="salvar" onclick="salvarTarefa()">
+                Salvar
+            </button>
+
+            <button class="cancelar" onclick="fecharTarefa()">
+                Cancelar
+            </button>
+
+        </div>
+
+    </div>
+
+    <script src="../frontend/js/tarefas.js"></script>
+
+</body>
+</html>
