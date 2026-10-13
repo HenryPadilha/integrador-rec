@@ -2,7 +2,7 @@ import "dotenv/config";
 import app from "./app";
 import { AppDataSource } from "./config/database";
 
-const PORT = 3000;
+const PORT = 3001;
 
 
 

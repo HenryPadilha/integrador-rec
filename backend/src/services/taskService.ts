@@ -1,12 +1,8 @@
+
 import { TaskRepository } from "../repositories/taskRepository";
 
 export class TaskService {
-
-  async criarTarefa(
-    titulo: string,
-    descricao: string,
-    usuario: any
-){
+  async criarTarefa(titulo: string, descricao: string, usuario: any) {
     const tarefa = TaskRepository.create({
       titulo: titulo,
       descricao: descricao,
@@ -14,62 +10,61 @@ export class TaskService {
     });
 
     return await TaskRepository.save(tarefa);
-}
-
-async listarTarefas(usuario: any) {
-
-  return await TaskRepository.find({
-    where: {
-      usuario: {
-        id: usuario.id
-      }
-    }
-  });
-
-}
-
-async atualizarTarefa(
-    id: number,
-    titulo: string,
-    descricao: string,
-    usuario: any
-  ) {
-
-const tarefa = await TaskRepository.findOne({
-  where: {
-    id: id,
-    usuario: {
-      id: usuario.id
-    }
   }
-});
+
+  async listarTarefas(usuario: any) {
+    return await TaskRepository.find({
+      where: {
+        usuario: { id: usuario.id }
+      }
+    });
+  }
+
+  async buscarTarefa(id: number, usuario: any) {
+    const tarefa = await TaskRepository.findOne({
+      where: {
+        id: id,
+        usuario: { id: usuario.id }
+      }
+    });
 
     if (!tarefa) {
-      throw new Error("Tarefa não encontrada");
+      throw new Error("Tarefa nao encontrada");
     }
+
+    return tarefa;
+  }
+
+  async atualizarTarefa(id: number, titulo: string, descricao: string, usuario: any) {
+    const tarefa = await TaskRepository.findOne({
+      where: {
+        id: id,
+        usuario: { id: usuario.id }
+      }
+    });
+
+    if (!tarefa) {
+      throw new Error("Tarefa nao encontrada");
+    }
+
     tarefa.titulo = titulo;
     tarefa.descricao = descricao;
 
     return await TaskRepository.save(tarefa);
   }
 
+  async excluirTarefa(id: number, usuario: any) {
+    const tarefa = await TaskRepository.findOne({
+      where: {
+        id: id,
+        usuario: { id: usuario.id }
+      }
+    });
 
-async excluirTarefa(
-  id: number,
-  usuario: any
-) {
- const tarefa = await TaskRepository.findOne({
-  where: {
-    id: id,
-    usuario: {
-      id: usuario.id
+    if (!tarefa) {
+      throw new Error("Tarefa nao encontrada");
     }
-  }
-});
 
-  if (!tarefa) {
-    throw new Error("Tarefa não encontrada");
-  }
-  await TaskRepository.remove(tarefa);
+    await TaskRepository.remove(tarefa);
   }
 }

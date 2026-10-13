@@ -1,12 +1,14 @@
 
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../frontend/css/tarefas.css">
+    <link rel="stylesheet" href="css/tarefas.css">
     <title>Tarefas</title>
 </head>
+
 <body>
 
     <header class="barra">
@@ -14,9 +16,8 @@
     </header>
 
     <div class="menu">
-        <button class="perfil">Perfil</button>
-        <button class="sair" onclick="window.location.href='cadastro.html'">  Sair
-</button>
+        <button class="perfil" onclick="verPerfil()">Perfil</button>
+        <button class="sair" onclick="sair()">Sair</button>
     </div>
 
     <div class="conteudo">
@@ -35,9 +36,13 @@
 
         <div class="caixa">
 
-            <h3>Adicionar tarefa</h3>
+            <h3 id="titulo-caixa">Adicionar tarefa</h3>
 
             <input type="text" id="titulo-tarefa" placeholder="Nome da tarefa">
+
+            <textarea id="descricao-tarefa" placeholder="Descrição da tarefa"></textarea>
+
+            <p id="mensagem"></p>
 
             <button class="salvar" onclick="salvarTarefa()">
                 Salvar
@@ -51,7 +56,7 @@
 
     </div>
 
-    <script src="../frontend/js/tarefas.js"></script>
+    <script src="js/tarefas.js"></script>
 
 </body>
 </html>

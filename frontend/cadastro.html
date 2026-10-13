@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
-    <link rel="stylesheet" href="/frontend/css/cadastro.css">
+    <link rel="stylesheet" href="css/cadastro.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>cadastro</title>
@@ -12,23 +13,28 @@
     <div class="card">
         <h1>Cadastro</h1>
 
-        <form method="">
+        <form id="formCadastro">
             <label>Nome:</label>
-            <input type="text" placeholder="Digite seu nome">
+            <input type="text" id="nome" placeholder="Digite seu nome" required>
 
             <label>E-mail:</label>
-            <input type="email" placeholder="Digite seu e-mail">
+            <input type="email" id="email" placeholder="Digite seu e-mail" required>
 
             <label>Senha:</label>
-            <input type="password" placeholder="Digite sua senha">
+            <input type="password" id="senha" placeholder="Digite sua senha" required>
 
             <label>Confirmar senha:</label>
-            <input type="password" placeholder="Confirme sua senha">
+            <input type="password" id="confirmarSenha" placeholder="Confirme sua senha" required>
 
-            <button class="cadastrar" onclick="window.location.href='tarefas.html'"> Cadastrar
-            </button>
+            <p id="mensagem"></p>
+
+            <button class="cadastrar" type="submit">Cadastrar</button>
+
+            <p>ja tem conta? faça o <a href="login.html">login</a></p>
         </form>
     </div>
+
+    <script src="js/cadastro.js"></script>
 </body>
 
 </html>

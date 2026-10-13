@@ -1,65 +1,190 @@
 
-function novaTarefa() {
-    document.getElementById('caixa-tarefa').style.display = 'flex';
-    document.getElementById('titulo-tarefa').focus();
-}
-function fecharTarefa() {
-    document.getElementById('caixa-tarefa').style.display = 'none';
-}
-function salvarTarefa() {
-    const titulo = document.getElementById('titulo-tarefa').value.trim();
+const API_URL = 'http://localhost:3001';
+let tarefaEditando = null;
 
-    if (titulo === '') {
-        alert('digite o nome da tarefa');
+async function carregarTarefas() {
+    const token = localStorage.getItem('token');
+    const lista = document.getElementById('lista-tarefas');
+
+    if (!token) {
+        window.location.href = 'login.html';
         return;
     }
 
-    const lista = document.getElementById('lista-tarefas');
+    try {
+        const resposta = await fetch(API_URL + '/tarefas', {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        });
 
-    const tarefa = document.createElement('div');
-    tarefa.className = 'item-tarefa';
+        if (resposta.status === 401 || resposta.status === 403) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('usuario');
+            window.location.href = 'login.html';
+            return;
+        }
 
-    const concluir = document.createElement('input');
-    concluir.type = 'checkbox';
+        const tarefas = await resposta.json();
 
-    const texto = document.createElement('span');
-    texto.className = 'texto-tarefa';
-    texto.textContent = titulo;
+        lista.innerHTML = '';
 
-    concluir.onchange = function () {
-        texto.classList.toggle('concluida', concluir.checked);
-    };
+        if (!resposta.ok) {
+            lista.textContent = 'Erro ao carregar tarefas.';
+            return;
+        }
 
-    const acoes = document.createElement('div');
-    acoes.className = 'acoes';
+        if (tarefas.length === 0) {
+            lista.textContent = 'Voce ainda nao tem tarefas.';
+            return;
+        }
 
-    const excluir = document.createElement('button');
-    excluir.className = 'excluir';
-    excluir.textContent = 'X';
+        tarefas.forEach(function(tarefa) {
+            const caixa = document.createElement('div');
+            const titulo = document.createElement('h3');
+            const descricao = document.createElement('p');
+            const editar = document.createElement('button');
+            const excluir = document.createElement('button');
 
-    excluir.onclick = function () {
-        tarefa.remove();
-    };
+            titulo.textContent = tarefa.titulo;
+            descricao.textContent = tarefa.descricao || '';
+            editar.textContent = 'Editar';
+            excluir.textContent = 'Excluir';
 
-    acoes.appendChild(excluir);
+            editar.onclick = function() {
+                editarTarefa(tarefa);
+            };
 
-    tarefa.appendChild(concluir);
-    tarefa.appendChild(texto);
-    tarefa.appendChild(acoes);
+            excluir.onclick = function() {
+                excluirTarefa(tarefa.id);
+            };
 
-    lista.appendChild(tarefa);
+            caixa.appendChild(titulo);
+            caixa.appendChild(descricao);
+            caixa.appendChild(editar);
+            caixa.appendChild(excluir);
 
-    document.getElementById('titulo-tarefa').value = '';
+            lista.appendChild(caixa);
+        });
 
-    fecharTarefa();
+    } catch (erro) {
+        lista.textContent = 'Nao foi possivel conectar ao servidor.';
+    }
 }
 
-document.getElementById('titulo-tarefa').addEventListener('keydown', function (event) {
-    if (event.key === 'Enter') {
-        salvarTarefa();
-    }
-    if (event.key === 'Escape') {
-        fecharTarefa();
-    }
-});
+function novaTarefa() {
+    tarefaEditando = null;
 
+    document.getElementById('titulo-caixa').textContent = 'Adicionar tarefa';
+    document.getElementById('titulo-tarefa').value = '';
+    document.getElementById('descricao-tarefa').value = '';
+    document.getElementById('mensagem').textContent = '';
+    document.getElementById('caixa-tarefa').style.display = 'flex';
+}
+
+function fecharTarefa() {
+    document.getElementById('caixa-tarefa').style.display = 'none';
+}
+
+async function salvarTarefa() {
+    const token = localStorage.getItem('token');
+    const titulo = document.getElementById('titulo-tarefa').value.trim();
+    const descricao = document.getElementById('descricao-tarefa').value.trim();
+    const mensagem = document.getElementById('mensagem');
+
+    if (!titulo) {
+        mensagem.textContent = 'Digite o nome da tarefa.';
+        return;
+    }
+
+    try {
+        let url = API_URL + '/tarefas';
+        let metodo = 'POST';
+
+        if (tarefaEditando !== null) {
+            url = API_URL + '/tarefas/' + tarefaEditando;
+            metodo = 'PUT';
+        }
+
+        const resposta = await fetch(url, {
+            method: metodo,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({
+                titulo: titulo,
+                descricao: descricao
+            })
+        });
+
+        const dados = await resposta.json();
+
+        if (resposta.ok) {
+            fecharTarefa();
+            carregarTarefas();
+        } else {
+            mensagem.textContent = dados.mensagem || 'Erro ao salvar tarefa.';
+        }
+
+    } catch (erro) {
+        mensagem.textContent = 'Nao foi possivel conectar ao servidor.';
+    }
+}
+
+function editarTarefa(tarefa) {
+    tarefaEditando = tarefa.id;
+
+    document.getElementById('titulo-caixa').textContent = 'Editar tarefa';
+    document.getElementById('titulo-tarefa').value = tarefa.titulo;
+    document.getElementById('descricao-tarefa').value = tarefa.descricao || '';
+    document.getElementById('mensagem').textContent = '';
+    document.getElementById('caixa-tarefa').style.display = 'flex';
+}
+
+async function excluirTarefa(id) {
+    const token = localStorage.getItem('token');
+
+    if (!confirm('Deseja excluir esta tarefa?')) {
+        return;
+    }
+
+    try {
+        const resposta = await fetch(API_URL + '/tarefas/' + id, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        });
+
+        const dados = await resposta.json();
+
+        if (resposta.ok) {
+            carregarTarefas();
+        } else {
+            alert(dados.mensagem || 'Erro ao excluir tarefa.');
+        }
+
+    } catch (erro) {
+        alert('Nao foi possivel conectar ao servidor.');
+    }
+}
+
+function sair() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuario');
+    window.location.href = 'login.html';
+}
+
+function verPerfil() {
+    const dados = localStorage.getItem('usuario');
+
+    if (dados) {
+        const usuario = JSON.parse(dados);
+        alert('Nome: ' + usuario.nome + '\nE-mail: ' + usuario.email);
+    } else {
+        alert('Dados do usuario nao encontrados.');
+    }
+}
+
+carregarTarefas();
